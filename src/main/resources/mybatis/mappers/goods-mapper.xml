@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.myshop.goods.dao.GoodsDao">
+	<sql id="goods_base_select">
+		SELECT ROW_ID,GOODS_NAME,GOODS_CODE,GOODS_PRICE,GOODS_NUM,GOODS_UPANDDOWN,GOODS_INFO,GOODS_IMG,ACTIVE_FLAG,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE FROM TB_GOODS WHERE ACTIVE_FLAG=1
+	</sql>
+	<!-- 前台商品展示 -->
+	<select id="find" resultType="Goods">
+		<include refid="goods_base_select"/>
+	</select>
+	<!-- 新增 -->
+	<insert id="saveGoods">
+		INSERT INTO TB_GOODS
+		(GOODS_UPANDDOWN,GOODS_NAME,GOODS_CODE,GOODS_PRICE,GOODS_NUM,GOODS_IMG,GOODS_INFO,ACTIVE_FLAG,CREATE_BY,CREATE_DATE)
+		VALUE(#{goodsUpAndDown},#{goodsName},#{goodsCode},#{goodsPrice},#{goodsNum},#{goodsImg},#{goodsInfo},#{activeFlag},#{createBy},#{createDate})
+	</insert>
+	<!-- 删除 -->
+	<delete id="delete">
+		DELETE FROM TB_GOODS WHERE ROW_ID = #{rowId}
+	</delete>
+	<!-- 分页查询？ -->
+	<select id="findByPage" resultType="Goods">
+		<include refid="goods_base_select"/>
+		<include refid="search_sql"/>
+		 LIMIT #{firstResult},#{maxResults}
+	</select>
+	<select id="getCount" resultType="java.lang.Integer">
+		SELECT COUNT(ROW_ID)FROM TB_GOODS WHERE ACTIVE_FLAG =1
+		<include refid="search_sql" />
+	</select>
+	<!-- 找到一个商品实例 -->
+	<select id="get" resultType="Goods">
+		<include refid="goods_base_select" />
+		AND ROW_ID = #{rowId}
+	</select>
+	<!-- 根据商品编号找到一个商品实例 -->
+	<select id="getByGoodsCode" resultType="Goods">
+		<include refid="goods_base_select"/>
+		AND GOODS_CODE=#{goodsCode}
+	</select>
+	<!-- 修改 -->
+	<update id="update" parameterType="Goods">
+		UPDATE TB_GOODS
+		<set>
+			<if test="goodsUpAndDown!=null">
+				GOODS_UPANDDOWN = #{goodsUpAndDown},
+			</if>
+			<if test="goodsName!=null">
+				GOODS_NAME = #{goodsName},
+			</if>
+			<if test="goodsCode!=null">
+				GOODS_CODE = #{goodsCode},
+			</if>
+			<if test="goodsImg!=null">
+				GOODS_IMG = #{goodsImg},
+			</if>
+			<if test="goodsPrice!=null">
+				GOODS_PRICE = #{goodsPrice},
+			</if>
+			<if test="goodsNum!=null">
+				GOODS_NUM = #{goodsNum},
+			</if>
+			<if test="goodsInfo!=null">
+				GOODS_INFO = #{goodsInfo},
+			</if>
+			<if test="updateBy!=null">
+				UPDATE_BY = #{updateBy},
+			</if>
+			<if test="updateDate!=null">
+				UPDATE_DATE = #{updateDate},
+			</if>
+		</set>
+		WHERE ROW_ID = #{rowId}
+	</update>
+	
+	
+	
+		<!-- 下面是多条件查询语句 -->
+	<sql id="search_sql">
+		<if test="searchGoods!=null">
+			<if test="searchGoods.goodsUpAndDown!=null">
+				AND GOODS_UPANDDOWN = #{searchGoods.goodsUpAndDown}
+			</if>
+			<if test="searchGoods.goodsName!=null">
+				AND GOODS_NAME = #{searchGoods.goodsName}
+			</if>
+			<if test="searchGoods.goodsCode!=null">
+				AND GOODS_CODE = #{searchGoods.goodsCode}
+			</if>
+			<if test="searchGoods.goodsPrice!=null">
+				AND GOODS_PRICE = #{searchGoods.goodsPrice}
+			</if>
+			<if test="searchGoods.goodsNum!=null">
+				AND GOODS_NUM = #{searchGoods.goodsNum}
+			</if>
+		</if>
+	</sql>
+</mapper>

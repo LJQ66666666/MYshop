@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.myshop.catalogue.dao.CatalogueDao">
+	<sql id="catalogue_base_select">
+		SELECT ROW_ID,PARENT_CATALOGUE_ID,CATALOGUE_INFO,CATALOGUE_NAME,ACTIVE_FLAG,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE FROM TB_CATALOGUE WHERE ACTIVE_FLAG=1
+	</sql>
+	<!-- 新增目录 -->
+	<insert id="save" parameterType="Catalogue" useGeneratedKeys="true" keyColumn="ROW_ID" keyProperty="rowId">
+		INSERT INTO TB_CATALOGUE
+		(PARENT_CATALOGUE_ID,CATALOGUE_INFO,CATALOGUE_NAME,ACTIVE_FLAG,CREATE_BY,CREATE_DATE)
+		VALUES(#{parentCatalogueId},#{catalogueInfo},#{catalogueName},#{activeFlag},#{createBy},#{createDate})
+	</insert>
+	<!--查看所有的目录 -->
+	<select id="find" resultType="Catalogue">
+		<include refid="catalogue_base_select" />
+	</select>
+	<!-- 删除目录（先物理删除吧） -->
+	<delete id="delete">
+		DELETE FROM TB_CATALOGUE WHERE ROW_ID = #{rowId}
+	</delete>
+	<select id="get" resultType="Catalogue">
+		<include refid="catalogue_base_select"></include>
+		AND ROW_ID=#{rowId}
+	</select>
+	<!-- 修改 -->
+	<update id="update" parameterType="Catalogue">
+		UPDATE TB_CATALOGUE
+		<set>
+			<if test="catalogueName!=null">
+				CATALOGUE_NAME = #{catalogueName},
+			</if>
+			<if test="catalogueInfo!=null">
+				CATALOGUE_INFO = #{catalogueInfo},
+			</if>
+		</set>
+		WHERE ROW_ID = #{rowId}
+	</update>
+</mapper>

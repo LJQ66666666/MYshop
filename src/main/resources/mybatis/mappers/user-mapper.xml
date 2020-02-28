@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.myshop.user.dao.UserDao">
+	<sql id="user_base_select">
+		SELECT ROW_ID,USER_KIND,USER_NAME,USER_CODE,USER_PASS,USER_MOBILE,USER_LOCK,USER_LASTLOGINIP,USER_LASTLOGINTIME,ACTIVE_FLAG,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE FROM TB_USER WHERE ACTIVE_FLAG=1
+	</sql>
+	<!-- 用户登录 -->
+	<select id="userLogin" resultType="User">
+		<include refid="user_base_select" />
+		AND USER_LOCK=0 AND USER_KIND=2 AND USER_CODE=#{userCode} AND USER_PASS=#{userPass}
+	</select>
+	<!-- 管理员登录 -->
+	<select id="adminLogin" resultType="User">
+		<include refid="user_base_select" />
+		AND USER_LOCK=0 AND USER_KIND=1 AND USER_CODE=#{adminCode} AND USER_PASS=#{adminPass}
+	</select>
+	<insert id="save" parameterType="User" useGeneratedKeys="true" keyColumn="ROW_ID" keyProperty="rowId">
+		INSERT INTO TB_USER(USER_KIND,USER_NAME,USER_CODE,USER_PASS,USER_MOBILE,USER_LOCK,ACTIVE_FLAG,CREATE_BY,CREATE_DATE)
+		VALUES(#{userKind},#{userName},#{userCode},#{userPass},#{userMobile},#{userLock},#{activeFlag},#{createBy},#{createDate})
+	</insert>
+	<select id="find" resultType="User">
+		<include refid="user_base_select" />
+	</select>
+	<select id="get" resultType="User">
+		<include refid="user_base_select" />
+		AND ROW_ID = #{rowId}
+	</select>
+	<update id="update" parameterType="User">
+		UPDATE TB_USER
+		<set>
+			<if test="userKind!=null">
+				USER_KIND = #{userKind},
+			</if>
+			<if test="userName!=null">
+				USER_NAME = #{userName},
+			</if>
+			<if test="userCode!=null">
+				USER_CODE = #{userCode},
+			</if>
+			<if test="userPass!=null">
+				USER_PASS = #{userPass},
+			</if>
+			<if test="userMobile!=null">
+				USER_MOBILE = #{userMobile},
+			</if>
+			<if test="userLock!=null">
+				USER_LOCK = #{userLock},
+			</if>
+			<if test="updateBy!=null">
+				UPDATE_BY = #{updateBy},
+			</if>
+			<if test="updateDate!=null">
+				UPDATE_DATE = #{updateDate},
+			</if>
+		</set>
+		WHERE ROW_ID = #{rowId}
+	</update>
+	<delete id="delete">
+		DELETE FROM TB_USER WHERE ROW_ID = #{rowId}
+	</delete>
+	<!-- 分页查询？ -->
+	<select id="findByPage" resultType="User">
+		<include refid="user_base_select"/>
+		<include refid="search_sql"/>
+		 LIMIT #{firstResult},#{maxResults}
+	</select>
+	<select id="getCount" resultType="java.lang.Integer">
+		SELECT COUNT(ROW_ID)FROM TB_USER WHERE ACTIVE_FLAG =1
+		<include refid="search_sql" />
+	</select>
+	<select id="getByName" resultType="User">
+		<include refid="user_base_select"/> AND USER_NAME = #{userName}
+	</select>
+	<select id="getByCode" resultType="User">
+		<include refid="user_base_select"/> AND USER_CODE = #{userCode}
+	</select>
+	<!-- 下面是多条件查询语句 -->
+	<sql id="search_sql">
+		<if test="searchUser!=null">
+			<if test="searchUser.userKind!=null">
+				AND USER_KIND = #{searchUser.userKind}
+			</if>
+			<if test="searchUser.userLock!=null">
+				AND USER_LOCK = #{searchUser.userLock}
+			</if>
+			<if test="searchUser.UserName!=null">
+				AND USER_NAME = #{searchUser.userName}
+			</if>
+			<if test="searchUser.UserCode!=null">
+				AND USER_CODE = #{searchUser.userCode}
+			</if>
+			<if test="searchUser.UserMobile!=null">
+				AND USER_MOBILE = #{searchUser.userMobile}
+			</if>
+		</if>
+	</sql>
+
+</mapper>

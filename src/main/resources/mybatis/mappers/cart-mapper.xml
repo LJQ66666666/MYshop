@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.myshop.cart.dao.CartDao">
+	<!--购物车新增 -->
+	<insert id="save" parameterType="Cart" keyColumn="ROW_ID" keyProperty="rowId" useGeneratedKeys="true">
+		INSERT INTO TB_CART
+		(USER_CODE,GOODS_ID,BUY_COUNT,TOTAL_PRICE,ACTIVE_FLAG,CREATE_BY,CREATE_DATE)
+		VALUES(#{userCode},#{goodsId},#{buyCount},#{totalPrice},#{activeFlag},#{createBy},#{createDate})
+	</insert>
+	<!--根据商品Id查询购物车 -->
+	<select id="getByGoodsId" resultType="Cart">
+		SELECT ROW_ID,
+		USER_CODE,GOODS_ID,BUY_COUNT,TOTAL_PRICE,ACTIVE_FLAG,CREATE_BY,CREATE_DATE
+		FROM TB_CART
+		WHERE GOODS_ID=#{goodsId} AND USER_CODE = #{userCode}
+	</select>
+	<!-- 更新购物车 -->
+	<update id="update" parameterType="Cart">
+		UPDATE TB_CART
+		<set>
+			<if test="buyCount!=null">BUY_COUNT=#{buyCount},</if>
+		</set>
+		WHERE ROW_ID = #{rowId}
+	</update>
+	<!-- 从视图中查询出需要的数据，以便于EL表达式的运用（Controller层中带数据） -->
+	<select id="find" resultType="Cart">
+		SELECT
+		GOODS_NAME,GOODS_PRICE,BUY_COUNT,TOTAL_PRICE,GOODS_ID,USER_CODE,GOODS_IMG
+		FROM V_CART
+		WHERE USER_CODE = #{userCode}
+	</select>
+	<!-- 从购物车中根据userCode和goodsId删除一条数据 -->
+	<delete id="delete">
+		DELETE FROM TB_CART WHERE GOODS_ID=#{goodsId}
+	</delete>
+
+
+</mapper>

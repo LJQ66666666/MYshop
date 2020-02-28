@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.myshop.address.dao.AddressDao">
+	<!-- 基本的查询语句 -->
+	<sql id="base_address_select">
+		SELECT ROW_ID,ADDRESS_ID,USER_CODE,CONSIGNEE,PROVINCE,CITY,COUNTY,DETAIL_ADDRESS,POST_CODE,CONSIGNEE_PHONE,ACTIVE_FLAG,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE
+		FROM TB_ADDRESS WHERE ACTIVE_FLAG=1
+	</sql>
+	<insert id="save">
+		INSERT INTO TB_ADDRESS
+		(ADDRESS_ID,USER_CODE,CONSIGNEE,PROVINCE,CITY,COUNTY,DETAIL_ADDRESS,POST_CODE,CONSIGNEE_PHONE,ACTIVE_FLAG,CREATE_BY,CREATE_DATE)
+		VALUES(#{addressId},#{userCode},#{conSignee},#{province},#{city},#{county},#{detailed},#{postCode},#{consigneePhone},#{activeFlag},#{createBy},#{createDate})
+	</insert>
+	<select id="find" resultType="Address">
+		<include refid="base_address_select"></include>
+		AND USER_CODE=#{userCode}
+	</select>
+
+</mapper>
