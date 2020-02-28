@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.apache.ibatis.type.Alias;
 @Alias("Area")
 public class area implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;//
 	private String areaCode;//区域编号
 	private String areaName;//区域名称
 	private Long parentCode;//父节点
